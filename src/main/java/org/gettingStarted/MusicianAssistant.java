@@ -25,10 +25,10 @@ public class MusicianAssistant
                 .baseUrl("http://langchain4j.dev/demo/openai/v1") // using a free version of the openai just for learning purpose
                 .apiKey( OPENAI_API_KEY )
                 .modelName( GPT_4_O_MINI )
-                .temperature( 0.3 )
+                .temperature( 0.7 )
                 .timeout( Duration.ofSeconds(60) )
                 .logRequests( true )
-                .logRequests( true )
+                .logResponses( true )
                 .build();
 
         Musician musician = new MusicianAssistant().generateTopThreeAlbums(chatLanguageModel, name);
