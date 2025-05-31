@@ -45,10 +45,7 @@ public class MusicianAssistantTest
             System.out.println("Creating a new Ollama container with the model image...");
             OllamaContainer ollama = new OllamaContainer("ollama/ollama:latest");
             ollama.start();
-            ollama.execInContainer("ollama"
-                    ,
-                    "pull"
-                    , MODEL_NAME);
+            ollama.execInContainer("ollama", "pull", MODEL_NAME);
             ollama.commitToImage(MODEL_NAME);
             return ollama;
         } else {
