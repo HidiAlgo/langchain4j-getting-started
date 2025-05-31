@@ -36,7 +36,7 @@ public class MusicianAssistant
         exit(0);
     }
 
-    private Musician generateTopThreeAlbums( ChatLanguageModel model, String name )
+    public Musician generateTopThreeAlbums(ChatLanguageModel model, String name)
     {
         SystemMessage systemMessage = SystemMessage.from("""
                 You are an expert in Jazz music.
