@@ -13,7 +13,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!--LangChain4j-->
-        <version.langchain4j>0.35.0</version.langchain4j>
+        <version.langchain4j>1.0.1</version.langchain4j>
         <version.tinylog>2.7.0</version.tinylog>
         <!-- Test -->
         <version.testcontainers>1.20.2</version.testcontainers>
@@ -56,7 +56,10 @@
         <dependency>
             <groupId>dev.langchain4j</groupId>
             <artifactId>langchain4j-ollama</artifactId>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>dev.langchain4j</groupId>
+            <artifactId>langchain4j-hugging-face</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
