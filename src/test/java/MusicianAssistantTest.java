@@ -1,8 +1,8 @@
 import com.github.dockerjava.api.model.Image;
-import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.ChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
-import org.gettingStarted.Musician;
-import org.gettingStarted.MusicianAssistant;
+import org.gettingStarted.ChatAssistants;
+import org.gettingStarted.Politician;
 import org.junit.Test;
 import org.testcontainers.DockerClientFactory;
 import org.testcontainers.ollama.OllamaContainer;
@@ -22,14 +22,14 @@ public class MusicianAssistantTest
     public void testGenerateAlbums() throws IOException, InterruptedException {
         OllamaContainer ollamaContainer = createOllamaContainer();
         ollamaContainer.start();
-        ChatLanguageModel model = OllamaChatModel.builder()
+        ChatModel model = OllamaChatModel.builder()
                 .baseUrl(String.format("http://%s:%d", ollamaContainer.getHost(), ollamaContainer.getFirstMappedPort() ) )
                 .modelName(MODEL_NAME)
                 .temperature(0.0)
                 .timeout(Duration.ofMinutes(5))
                 .build();
 
-        Musician musician = new MusicianAssistant().generateTopThreeAlbums(model,
+        Politician musician = new ChatAssistants().getDescription(model,
                 "Miles Davis");
 
         assertTrue(musician.name().contains("Kind of Blue"));
