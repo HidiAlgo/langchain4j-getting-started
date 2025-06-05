@@ -25,8 +25,8 @@ public class Models
                 .modelName( GPT_4_O_MINI )  // open ai model name
                 .temperature( 0.7 ) // this defines how random the response is, 2 is maximum 0 is low
                 .timeout( Duration.ofSeconds(60) ) // time it waits until a response come
-                .logRequests( true ) // any logs defined in requests
-                .logResponses( true ) // any logs defined in response
+                .logRequests( false ) // any logs defined in requests
+                .logResponses( false ) // any logs defined in response
                 .build();
 
         return chatLanguageModel;
