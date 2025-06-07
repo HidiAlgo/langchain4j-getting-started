@@ -1,11 +1,17 @@
 package org.gettingStarted.models;
 
+import dev.langchain4j.agent.tool.ToolSpecification;
+import dev.langchain4j.agent.tool.ToolSpecifications;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.request.ChatRequestParameters;
+import dev.langchain4j.model.chat.request.DefaultChatRequestParameters;
 import dev.langchain4j.model.huggingface.HuggingFaceChatModel;
 import dev.langchain4j.model.ollama.OllamaChatModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
+import org.gettingStarted.tools.LegalDocumentsTool;
 
 import java.time.Duration;
+import java.util.List;
 
 import static dev.langchain4j.model.openai.OpenAiChatModelName.GPT_4_O_MINI;
 
@@ -27,6 +33,30 @@ public class Models
                 .timeout( Duration.ofSeconds(60) ) // time it waits until a response come
                 .logRequests( false ) // any logs defined in requests
                 .logResponses( false ) // any logs defined in response
+                .build();
+
+        return chatLanguageModel;
+    }
+
+    public static ChatModel getOpenAiChatModelGPT_4_0_MINI__withTools()
+    {
+        LegalDocumentsTool legalDocumentsTool = new LegalDocumentsTool();
+        List<ToolSpecification> toolSpecificationList = ToolSpecifications
+                .toolSpecificationsFrom( legalDocumentsTool.getClass() );
+
+        ChatRequestParameters parameters = DefaultChatRequestParameters.builder()
+                .toolSpecifications( toolSpecificationList )
+                .build();
+
+        ChatModel chatLanguageModel = OpenAiChatModel.builder()
+                .baseUrl("http://langchain4j.dev/demo/openai/v1") // using a free version of the openai just for learning purpose
+                .apiKey( OPENAI_API_KEY )
+                .modelName( GPT_4_O_MINI )
+                .temperature( 0.7 )
+                .timeout( Duration.ofSeconds(60) )
+                .logRequests( false )
+                .logResponses( false )
+                .defaultRequestParameters( parameters ) // adding tools
                 .build();
 
         return chatLanguageModel;

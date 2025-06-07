@@ -1,22 +1,32 @@
 package org.gettingStarted;
 
+import dev.langchain4j.agent.tool.ToolExecutionRequest;
+import dev.langchain4j.agent.tool.ToolSpecification;
+import dev.langchain4j.agent.tool.ToolSpecifications;
 import dev.langchain4j.chain.ConversationalChain;
 import dev.langchain4j.data.message.AiMessage;
+import dev.langchain4j.data.message.ChatMessage;
+import dev.langchain4j.data.message.ToolExecutionResultMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.chat.ChatModel;
+import dev.langchain4j.model.chat.response.ChatResponse;
+import dev.langchain4j.service.tool.DefaultToolExecutor;
+import dev.langchain4j.service.tool.ToolExecutor;
 import dev.langchain4j.store.memory.chat.ChatMemoryStore;
 import dev.langchain4j.store.memory.chat.redis.RedisChatMemoryStore;
 import org.gettingStarted.models.Models;
+import org.gettingStarted.tools.LegalDocumentsTool;
 
-import java.util.Scanner;
+import java.util.*;
 
 public class Conversations {
     public static void main(String[] args) {
 //        startBasicConvoWithChatMemory();
 //        startConvoWithRedisChatStore();
-        startBasicConvoWithLangChains();
+//        startBasicConvoWithLangChains();
+        startConvoWithTools();
     }
 
     private static void startBasicConvoWithChatMemory() {
@@ -77,5 +87,32 @@ public class Conversations {
         System.out.println( chain.execute("Hello my name is Hashan") );
         System.out.println( chain.execute("Do you know my name?") );
 
+    }
+
+    private static void startConvoWithTools()
+    {
+        LegalDocumentsTool legalDocumentsTool = new LegalDocumentsTool();
+
+        List<ChatMessage> chatMessages = new ArrayList<>();
+        UserMessage userMessage = UserMessage.from( "When was the privacy document last updated on?" );
+        chatMessages.add( userMessage );
+
+        ChatModel model = Models.getOpenAiChatModelGPT_4_0_MINI__withTools();
+
+        AiMessage toolsResult = model.chat( userMessage ).aiMessage();
+        chatMessages.add( toolsResult );
+
+        List<ToolExecutionRequest> toolsRequest = toolsResult.toolExecutionRequests();
+
+        toolsRequest.forEach( req -> {
+            ToolExecutor executor = new DefaultToolExecutor( legalDocumentsTool, req ); // find the relevant method
+            String res = executor.execute( req, UUID.randomUUID().toString() ); // call the method and assign it with a unique identifier (UUID)
+            ToolExecutionResultMessage resultMessage = ToolExecutionResultMessage.from( req, res );
+            chatMessages.add( resultMessage ); // add the req and result mapping to original list
+        });
+
+        ChatResponse finalResult = model.chat( chatMessages );
+
+        System.out.println( finalResult.aiMessage() );
     }
 }
