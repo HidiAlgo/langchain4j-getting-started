@@ -1,5 +1,6 @@
 package org.gettingStarted;
 
+import dev.langchain4j.chain.ConversationalChain;
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.data.message.UserMessage;
 import dev.langchain4j.memory.ChatMemory;
@@ -11,58 +12,70 @@ import org.gettingStarted.models.Models;
 
 import java.util.Scanner;
 
-public class Conversations
-{
-    public static void main(String[] args)
-    {
+public class Conversations {
+    public static void main(String[] args) {
 //        startBasicConvoWithChatMemory();
-        startConvoWithRedisChatStore();
+//        startConvoWithRedisChatStore();
+        startBasicConvoWithLangChains();
     }
 
-    private static void startBasicConvoWithChatMemory()
-    {
-        System.out.println( "Greetings!!!!" );
-        System.out.println( "Please start your conversation" );
+    private static void startBasicConvoWithChatMemory() {
+        System.out.println("Greetings!!!!");
+        System.out.println("Please start your conversation");
 
         ChatModel model = Models.getOpenAiChatModelGPT_4_0_MINI();
-        ChatMemory chatMemory = MessageWindowChatMemory.withMaxMessages( 20 );
+        ChatMemory chatMemory = MessageWindowChatMemory.withMaxMessages(20);
 
-        Scanner scanner = new Scanner( System.in );
+        Scanner scanner = new Scanner(System.in);
 
         int count = 0;
 
-        while ( count < 20 )
-        {
-            System.out.println( "question: " );
+        while (count < 20) {
+            System.out.println("question: ");
             String question = scanner.nextLine();
-            chatMemory.add( new UserMessage( question ) );
+            chatMemory.add(new UserMessage(question));
 
-            AiMessage answer = model.chat( chatMemory.messages() ).aiMessage();
-            chatMemory.add( answer );
-            System.out.println( answer.text() );
-            System.out.println( "\n" );
+            AiMessage answer = model.chat(chatMemory.messages()).aiMessage();
+            chatMemory.add(answer);
+            System.out.println(answer.text());
+            System.out.println("\n");
             count++;
         }
 
-        System.out.println( chatMemory.messages() );
+        System.out.println(chatMemory.messages());
     }
 
-    private static void startConvoWithRedisChatStore()
-    {
+    private static void startConvoWithRedisChatStore() {
         ChatMemoryStore chatMemoryStore = RedisChatMemoryStore.builder()
-                .host( "localhost" )
-                .port( 6792 )
+                .host("localhost")
+                .port(6792)
                 .build();
 
         ChatMemory chatMemory = MessageWindowChatMemory.builder()
                 .maxMessages(20)
-                .chatMemoryStore( chatMemoryStore )
+                .chatMemoryStore(chatMemoryStore)
                 .build();
 
         ChatModel model = Models.getOpenAiChatModelGPT_4_0_MINI();
 
         chatMemory.add(new UserMessage("What is my name?"));
         AiMessage answer = model.chat(chatMemory.messages()).aiMessage();
-        System.out.println( answer );
+        System.out.println(answer);
+    }
+
+    private static void startBasicConvoWithLangChains()
+    {
+        ChatMemory memory = MessageWindowChatMemory.withMaxMessages( 20 );
+
+        ChatModel model = Models.getOpenAiChatModelGPT_4_0_MINI();
+
+        ConversationalChain chain = ConversationalChain.builder()
+                .chatModel( model )
+                .chatMemory( memory )
+                .build();
+
+        System.out.println( chain.execute("Hello my name is Hashan") );
+        System.out.println( chain.execute("Do you know my name?") );
+
     }
 }
