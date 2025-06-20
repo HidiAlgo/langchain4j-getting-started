@@ -23,8 +23,8 @@ public class ChatAssistants
         String name = args[0];
 
 //        ChatModel model = Models.getOpenAiChatModelGPT_4_0_MINI();
-        ChatModel model = Models.getHuggingFaceChatModel__dynamic_model( "mistralai/Mistral-7B-Instruct-v0.3" );
-//        ChatModel model = Models.getOllamaChatModelTINY_OLLAMA();
+//        ChatModel model = Models.getHuggingFaceChatModel__dynamic_model( "mistralai/Mistral-7B-Instruct-v0.3" );
+        ChatModel model = Models.getOllamaChatModelTINY_OLLAMA();
 
         Politician musician = new ChatAssistants().getDescription(model, name);
         System.out.println(musician);
